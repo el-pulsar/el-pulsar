@@ -87,13 +87,13 @@
         // Verificar conexión
         async function checkConnection() {
             try {
-                // Intentar obtener información del schema para verificar conexión
-                const { data, error } = await supabase.from('pg_catalog.pg_tables').select('*').limit(1);
+                // Método simple: intentar acceder a una tabla que no existe
+                // Si el error es "tabla no existe", significa que la conexión funciona
+                const { data, error } = await supabase.from('test_connection').select('*').limit(1);
                 
                 if (error) {
-                    // Si hay error, verificamos si es por permisos o por conexión
-                    if (error.message.includes('permission') || error.message.includes('42P01')) {
-                        // Estos errores indican que la conexión funciona pero no hay acceso a tablas
+                    // Si la tabla no existe, la conexión funciona correctamente
+                    if (error.code === '42P01') {
                         updateStatus('connected', '✅ Conexión a Supabase establecida');
                         document.getElementById('supabase-status').textContent = '✅ Conectado';
                     } else {
