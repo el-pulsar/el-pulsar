@@ -93,7 +93,7 @@
                 
                 if (error) {
                     // Si la tabla no existe, la conexión funciona correctamente
-                    if (error.code === '42P01') {
+                    if (error.code === '42P01' || error.message.includes('test_connection') || error.message.includes('schema cache')) {
                         updateStatus('connected', '✅ Conexión a Supabase establecida');
                         document.getElementById('supabase-status').textContent = '✅ Conectado';
                     } else {
