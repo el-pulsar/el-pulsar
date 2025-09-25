@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Pulsar - Ecosistema Centralizado</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .status { padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .connected { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .disconnected { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .components { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 30px; }
+        .component { background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #007bff; }
+        .component h3 { margin-top: 0; color: #007bff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 El Pulsar</h1>
+            <p>Ecosistema Centralizado - Filosofía Island Park</p>
+            <div id="connection-status" class="status disconnected">
+                Verificando conexión a Supabase...
+            </div>
+        </div>
+
+        <div class="components">
+            <div class="component">
+                <h3>📝 DSL Lacho</h3>
+                <p>Lenguaje de dominio específico para etiquetado y organización del ecosistema.</p>
+                <p><strong>Etiquetas:</strong> <code>github.repo.elpulsar.*</code></p>
+            </div>
+
+            <div class="component">
+                <h3>🔄 Devibe</h3>
+                <p>Sistema de desarrollo vibrante para integración continua y despliegue automatizado.</p>
+                <p><strong>Integración:</strong> GitHub + Vercel + Supabase</p>
+            </div>
+
+            <div class="component">
+                <h3>⏰ Dirime</h3>
+                <p>Sistema de control temporal para sincronización de agentes y procesos.</p>
+                <p><strong>Función:</strong> Coordinación temporal del ecosistema</p>
+            </div>
+
+            <div class="component">
+                <h3>🪙 EPIP Token</h3>
+                <p>Token de costo para medición y optimización de recursos del ecosistema.</p>
+                <p><strong>Gestión:</strong> Costos de hosting y mantenimiento</p>
+            </div>
+
+            <div class="component">
+                <h3>🤖 Agents</h3>
+                <p>Agentes inteligentes para automatización de tareas y procesamiento.</p>
+                <p><strong>Arquitectura:</strong> JSON-RPC + Supabase</p>
+            </div>
+
+            <div class="component">
+                <h3>🗄️ Supabase</h3>
+                <p>Base de datos centralizada para todo el ecosistema El Pulsar.</p>
+                <p><strong>URL:</strong> <code id="supabase-url">axxdxpdubiqjheybints.supabase.co</code></p>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #e9ecef; border-radius: 8px;">
+            <h3>📊 Estado del Sistema</h3>
+            <div id="system-info">
+                <p><strong>GitHub Pages:</strong> <span style="color: green;">✅ Activo</span></p>
+                <p><strong>Supabase:</strong> <span id="supabase-status">Verificando...</span></p>
+                <p><strong>Vercel:</strong> <span style="color: green;">✅ Configurado</span></p>
+                <p><strong>Última actualización:</strong> <span id="last-update">--</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de Supabase
+        const SUPABASE_URL = 'https://axxdxpdubiqjheybints.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4eGR4cGR1YmlxamhleWJpbnRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4MDg5NzIsImV4cCI6MjA3NDM4NDk3Mn0.nOsANty57T1fAxsNubnBToWpMuSp7gO5rXIcANF5BOA';
+
+        // Inicializar Supabase
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Verificar conexión
+        async function checkConnection() {
+            try {
+                const { data, error } = await supabase.from('your_table_name').select('*').limit(1);
+                
+                if (error) {
+                    // Si la tabla no existe, es normal, la conexión funciona
+                    if (error.code === '42P01') {
+                        updateStatus('connected', '✅ Conexión a Supabase establecida');
+                        document.getElementById('supabase-status').textContent = '✅ Conectado';
+                    } else {
+                        updateStatus('disconnected', '❌ Error de conexión: ' + error.message);
+                        document.getElementById('supabase-status').textContent = '❌ Error';
+                    }
+                } else {
+                    updateStatus('connected', '✅ Conexión a Supabase establecida');
+                    document.getElementById('supabase-status').textContent = '✅ Conectado';
+                }
+            } catch (err) {
+                updateStatus('disconnected', '❌ Error de conexión: ' + err.message);
+                document.getElementById('supabase-status').textContent = '❌ Error';
+            }
+            
+            // Actualizar fecha
+            document.getElementById('last-update').textContent = new Date().toLocaleString();
+        }
+
+        function updateStatus(status, message) {
+            const statusElement = document.getElementById('connection-status');
+            statusElement.className = `status ${status}`;
+            statusElement.textContent = message;
+        }
+
+        // Ejecutar verificación al cargar la página
+        document.addEventListener('DOMContentLoaded', checkConnection);
+    </script>
+</body>
+</html>
