@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { FaRocket, FaCalendarAlt, FaGithub } from 'react-icons/fa';
+import DocumentationButton from '../components/DocumentationButton';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -78,14 +79,7 @@ export default function Home() {
                 <FaGithub className="mr-2" />
                 Ver en GitHub
               </a>
-              <a
-                href="https://docs.elpulsar.app"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"
-              >
-                Ver Documentación
-              </a>
+              <DocumentationButton />
             </div>
           </div>
         </div>
