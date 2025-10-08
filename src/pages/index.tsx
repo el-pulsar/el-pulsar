@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { FaRocket, FaCalendarAlt, FaGithub } from 'react-icons/fa';
+import { FaRocket, FaCalendarAlt } from 'react-icons/fa';
 import DocumentationButton from '../components/DocumentationButton';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -68,17 +68,8 @@ export default function Home() {
             </div>
           </div>
           
-          <div className="mt-12 pt-8 border-t border-gray-200 space-y-4">
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <a
-                href="https://github.com/elpulsar"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 transition-colors"
-              >
-                <FaGithub className="mr-2" />
-                Ver en GitHub
-              </a>
+          <div className="mt-12 pt-8 border-t border-gray-200">
+            <div className="flex justify-center">
               <DocumentationButton />
             </div>
           </div>
