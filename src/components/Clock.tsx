@@ -2,71 +2,62 @@
 
 import { useEffect, useState } from 'react';
 
-const formatDate = (date: Date, timezone: string): string => {
+// Simple formateo de fecha
+const formatDate = (date: Date) => {
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  };
+  
   try {
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      timeZone: timezone
-    };
-    const dateStr = new Intl.DateTimeFormat('es-ES', options).format(date);
-    return dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
-  } catch (error) {
-    console.error('Error al formatear la fecha:', error);
-    return 'Error al cargar la fecha';
+    return new Intl.DateTimeFormat('es-ES', options)
+      .format(date)
+      .replace(/^\w/, (c) => c.toUpperCase());
+  } catch (e) {
+    return date.toLocaleDateString('es-ES', options);
   }
 };
 
-const formatTime = (date: Date, timezone: string): string => {
-  try {
-    const options: Intl.DateTimeFormatOptions = {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true,
-      timeZone: timezone
-    };
-    return new Intl.DateTimeFormat('es-ES', options).format(date);
-  } catch (error) {
-    console.error('Error al formatear la hora:', error);
-    return '--:--:--';
-  }
+// Simple formateo de hora
+const formatTime = (date: Date) => {
+  return date.toLocaleTimeString('es-ES', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  });
 };
 
 export default function Clock() {
-  const [isClient, setIsClient] = useState(false);
-  const [currentTime, setCurrentTime] = useState<Date | null>(null);
+  const [date, setDate] = useState<Date>(new Date());
   const [timezone, setTimezone] = useState<string>('');
+  const [mounted, setMounted] = useState(false);
 
-  // Set client-side flag and initial time
+  // Configuración inicial cuando el componente se monta
   useEffect(() => {
-    setIsClient(true);
-    setCurrentTime(new Date());
+    setMounted(true);
     
+    // Obtener la zona horaria del navegador
     try {
-      const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      setTimezone(userTimezone);
-    } catch (error) {
-      console.error('Error al detectar la zona horaria:', error);
+      setTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    } catch (e) {
+      console.error('Error al obtener la zona horaria:', e);
       setTimezone('UTC');
     }
+    
+    // Actualizar la hora cada segundo
+    const timer = setInterval(() => {
+      setDate(new Date());
+    }, 1000);
+    
+    // Limpiar el intervalo cuando el componente se desmonte
+    return () => clearInterval(timer);
   }, []);
 
-  // Update time every second
-  useEffect(() => {
-    if (!isClient) return;
-    
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [isClient]);
-
-  // Don't render anything during SSR or before client-side hydration
-  if (!isClient || !currentTime) {
+  // No renderizar nada en el servidor
+  if (!mounted) {
     return (
       <div className="clock-container">
         <span className="clock-label">Fecha Actual</span>
@@ -83,40 +74,11 @@ export default function Clock() {
           boxShadow: 'var(--shadow-sm)',
           border: '1px solid rgba(0, 0, 0, 0.05)'
         }}>
-          Cargando fecha...
-        </div>
-        
-        <span className="clock-label" style={{ marginTop: '1rem', display: 'block' }}>Hora Actual</span>
-        <div id="hora" style={{
-          fontSize: '2.5rem',
-          fontWeight: 700,
-          color: 'var(--primary)',
-          margin: '0.5rem 0',
-          fontFamily: 'JetBrains Mono, monospace',
-          letterSpacing: '1px'
-        }}>
-          --:--:--
-        </div>
-        
-        <span className="clock-label" style={{ marginTop: '1rem', display: 'block' }}>Zona Horaria</span>
-        <div style={{
-          marginTop: '0.5rem',
-          color: 'var(--gray-600)',
-          fontSize: '0.9rem',
-          fontFamily: 'monospace',
-          backgroundColor: 'rgba(0, 0, 0, 0.02)',
-          padding: '0.5rem 1rem',
-          borderRadius: '0.25rem',
-          display: 'inline-block'
-        }}>
-          {timezone || 'Cargando zona horaria...'}
+          Cargando...
         </div>
       </div>
     );
   }
-
-  const formattedDate = formatDate(currentTime, timezone);
-  const formattedTime = formatTime(currentTime, timezone);
 
   return (
     <div className="clock-container">
@@ -134,7 +96,7 @@ export default function Clock() {
         boxShadow: 'var(--shadow-sm)',
         border: '1px solid rgba(0, 0, 0, 0.05)'
       }}>
-        {formattedDate}
+        {formatDate(date)}
       </div>
       
       <span className="clock-label" style={{ marginTop: '1rem', display: 'block' }}>Hora Actual</span>
@@ -146,7 +108,7 @@ export default function Clock() {
         fontFamily: 'JetBrains Mono, monospace',
         letterSpacing: '1px'
       }}>
-        {formattedTime}
+        {formatTime(date)}
       </div>
       
       <span className="clock-label" style={{ marginTop: '1rem', display: 'block' }}>Zona Horaria</span>
@@ -160,7 +122,7 @@ export default function Clock() {
         borderRadius: '0.25rem',
         display: 'inline-block'
       }}>
-        {timezone}
+        {timezone || 'Cargando zona horaria...'}
       </div>
     </div>
   );
