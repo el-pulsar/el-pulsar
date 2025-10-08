@@ -1,10 +1,59 @@
-import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { FaRocket, FaCalendarAlt } from 'react-icons/fa';
 import DocumentationButton from '../components/DocumentationButton';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { Inter } from 'next/font/google';
+import dynamic from 'next/dynamic';
+
+// Importar el componente Clock dinámicamente para deshabilitar SSR
+const Clock = dynamic(() => import('../components/Clock'), {
+  ssr: false,
+  loading: () => (
+    <div className="clock-container">
+      <span className="clock-label">Fecha Actual</span>
+      <div id="reloj" style={{
+        fontSize: '1.25rem',
+        fontWeight: 600,
+        color: 'var(--gray-900)',
+        background: 'rgba(255, 255, 255, 0.7)',
+        padding: '1rem',
+        borderRadius: '0.5rem',
+        margin: '0.5rem 0',
+        minWidth: '300px',
+        display: 'inline-block',
+        boxShadow: 'var(--shadow-sm)',
+        border: '1px solid rgba(0, 0, 0, 0.05)'
+      }}>
+        Cargando fecha...
+      </div>
+      
+      <span className="clock-label" style={{ marginTop: '1rem', display: 'block' }}>Hora Actual</span>
+      <div id="hora" style={{
+        fontSize: '2.5rem',
+        fontWeight: 700,
+        color: 'var(--primary)',
+        margin: '0.5rem 0',
+        fontFamily: 'JetBrains Mono, monospace',
+        letterSpacing: '1px'
+      }}>
+        --:--:--
+      </div>
+      
+      <span className="clock-label" style={{ marginTop: '1rem', display: 'block' }}>Zona Horaria</span>
+      <div style={{
+        marginTop: '0.5rem',
+        color: 'var(--gray-600)',
+        fontSize: '0.9rem',
+        fontFamily: 'monospace',
+        backgroundColor: 'rgba(0, 0, 0, 0.02)',
+        padding: '0.5rem 1rem',
+        borderRadius: '0.25rem',
+        display: 'inline-block'
+      }}>
+        Cargando zona horaria...
+      </div>
+    </div>
+  )
+});
 
 // Configurar la fuente Inter
 const inter = Inter({ subsets: ['latin'] });
@@ -340,97 +389,7 @@ const styles = `
   }
 `;
 
-// Función para formatear la fecha
-const formatDate = (date: Date, timezone: string) => {
-  try {
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      timeZone: timezone
-    };
-    const dateStr = new Intl.DateTimeFormat('es-ES', options).format(date);
-    return dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
-  } catch (error) {
-    console.error('Error al formatear la fecha:', error);
-    return 'Error al cargar la fecha';
-  }
-};
-
-// Función para formatear la hora
-const formatTime = (date: Date, timezone: string) => {
-  try {
-    const options: Intl.DateTimeFormatOptions = {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true,
-      timeZone: timezone
-    };
-    return new Intl.DateTimeFormat('es-ES', options).format(date);
-  } catch (error) {
-    console.error('Error al formatear la hora:', error);
-    return '--:--:--';
-  }
-};
-
 export default function Home() {
-  const [currentDateTime, setCurrentDateTime] = useState({
-    date: 'Cargando fecha...',
-    time: '--:--:--',
-    timezone: 'Cargando zona horaria...'
-  });
-
-  // Get user's timezone on client side
-  useEffect(() => {
-    // Solo se ejecuta en el cliente
-    if (typeof window === 'undefined') return;
-    
-    // Función para actualizar el reloj
-    const updateClock = () => {
-      try {
-        const now = new Date();
-        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        
-        // Usar las funciones de formateo mejoradas
-        const formattedDate = formatDate(now, userTimezone);
-        const formattedTime = formatTime(now, userTimezone);
-        
-        // Actualizar el estado solo si los valores han cambiado
-        setCurrentDateTime(prev => {
-          if (prev.date === formattedDate && 
-              prev.time === formattedTime && 
-              prev.timezone === userTimezone) {
-            return prev;
-          }
-          return {
-            date: formattedDate,
-            time: formattedTime,
-            timezone: userTimezone
-          };
-        });
-      } catch (error) {
-        console.error('Error al actualizar el reloj:', error);
-        setCurrentDateTime(prev => ({
-          ...prev,
-          date: 'Error al cargar la fecha',
-          time: '--:--:--',
-          timezone: 'Error al detectar zona horaria'
-        }));
-      }
-    };
-    
-    // Actualizar inmediatamente
-    updateClock();
-    
-    // Actualizar cada segundo
-    const timer = setInterval(updateClock, 1000);
-    
-    // Limpiar intervalo al desmontar el componente
-    return () => clearInterval(timer);
-  }, []);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Head>
@@ -438,7 +397,6 @@ export default function Home() {
         <meta name="description" content="Bienvenido a El Pulsar" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <svg className="logo" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -455,50 +413,7 @@ export default function Home() {
           <h1>Bienvenido a <span style={{ display: 'block' }}>El Pulsar</span></h1>
           <p className="subtitle">Tu plataforma de documentación y recursos tecnológicos</p>
           
-          <div className="clock-container">
-            <span className="clock-label">Fecha Actual</span>
-            <div id="reloj" style={{
-              fontSize: '1.5rem',
-              fontWeight: 600,
-              color: 'var(--gray-900)',
-              background: 'rgba(255, 255, 255, 0.7)',
-              padding: '1rem',
-              borderRadius: '0.5rem',
-              margin: '0.5rem 0',
-              minWidth: '300px',
-              display: 'inline-block',
-              boxShadow: 'var(--shadow-sm)',
-              border: '1px solid rgba(0, 0, 0, 0.05)'
-            }}>
-              {currentDateTime.date || 'Cargando fecha...'}
-            </div>
-            
-            <span className="clock-label" style={{ marginTop: '1rem', display: 'block' }}>Hora Actual</span>
-            <div id="hora" style={{
-              fontSize: '2.5rem',
-              fontWeight: 700,
-              color: 'var(--primary)',
-              margin: '0.5rem 0',
-              fontFamily: 'JetBrains Mono, monospace',
-              letterSpacing: '1px'
-            }}>
-              {currentDateTime.time || '--:--:--'}
-            </div>
-            
-            <span className="clock-label" style={{ marginTop: '1rem', display: 'block' }}>Zona Horaria</span>
-            <div style={{
-              marginTop: '0.5rem',
-              color: 'var(--gray-600)',
-              fontSize: '0.9rem',
-              fontFamily: 'monospace',
-              backgroundColor: 'rgba(0, 0, 0, 0.02)',
-              padding: '0.5rem 1rem',
-              borderRadius: '0.25rem',
-              display: 'inline-block'
-            }}>
-              {currentDateTime.timezone || 'Cargando zona horaria...'}
-            </div>
-          </div>
+          <Clock />
           
           <a 
             href="https://docs.elpulsar.app" 
