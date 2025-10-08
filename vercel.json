@@ -6,6 +6,13 @@
       "use": "@vercel/static"
     }
   ],
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://www.elpulsar.app",
+      "permanent": true
+    }
+  ],
   "routes": [
     {
       "src": "/(.*)",
