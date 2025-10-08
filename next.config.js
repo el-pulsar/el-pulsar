@@ -1,31 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
-  images: {
-    domains: ['www.elpulsar.app', 'docs.elpulsar.app'],
-  },
-  // Configuración para rutas personalizadas si es necesario
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'https://api.elpulsar.app/:path*',
-      },
-    ]
-  },
-  // Habilitar compresión GZIP
-  compress: true,
-  // Configuración de encabezados de seguridad
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: securityHeaders,
-      },
-    ]
-  },
-}
 
 // Encabezados de seguridad
 const securityHeaders = [
@@ -49,6 +22,36 @@ const securityHeaders = [
     key: 'Referrer-Policy',
     value: 'origin-when-cross-origin',
   },
+  {
+    key: 'Content-Security-Policy',
+    value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self';",
+  },
 ]
+
+const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
+  output: 'export',
+  distDir: 'out',
+  images: {
+    unoptimized: true,
+    domains: ['www.elpulsar.app', 'docs.elpulsar.app'],
+  },
+  compress: true,
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: securityHeaders,
+      },
+    ]
+  },
+  exportPathMap: async function() {
+    return {
+      '/': { page: '/' },
+      '/index.html': { page: '/' },
+    }
+  }
+}
 
 module.exports = nextConfig
