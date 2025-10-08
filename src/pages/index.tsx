@@ -413,7 +413,105 @@ export default function Home() {
           <h1>Bienvenido a <span style={{ display: 'block' }}>El Pulsar</span></h1>
           <p className="subtitle">Tu plataforma de documentación y recursos tecnológicos</p>
           
-          <Clock />
+          {/* Simple Clock Implementation */}
+          <div className="clock-container">
+            <span className="clock-label">Fecha Actual</span>
+            <div id="current-date" style={{
+              fontSize: '1.5rem',
+              fontWeight: 600,
+              color: 'var(--gray-900)',
+              background: 'rgba(255, 255, 255, 0.7)',
+              padding: '1rem',
+              borderRadius: '0.5rem',
+              margin: '0.5rem 0',
+              minWidth: '300px',
+              display: 'inline-block',
+              boxShadow: 'var(--shadow-sm)',
+              border: '1px solid rgba(0, 0, 0, 0.05)'
+            }}>
+              Cargando...
+            </div>
+            
+            <span className="clock-label" style={{ marginTop: '1rem', display: 'block' }}>Hora Actual</span>
+            <div id="current-time" style={{
+              fontSize: '2.5rem',
+              fontWeight: 700,
+              color: 'var(--primary)',
+              margin: '0.5rem 0',
+              fontFamily: 'JetBrains Mono, monospace',
+              letterSpacing: '1px'
+            }}>
+              --:--:--
+            </div>
+            
+            <span className="clock-label" style={{ marginTop: '1rem', display: 'block' }}>Zona Horaria</span>
+            <div id="timezone" style={{
+              marginTop: '0.5rem',
+              color: 'var(--gray-600)',
+              fontSize: '0.9rem',
+              fontFamily: 'monospace',
+              backgroundColor: 'rgba(0, 0, 0, 0.02)',
+              padding: '0.5rem 1rem',
+              borderRadius: '0.25rem',
+              display: 'inline-block'
+            }}>
+              Cargando zona horaria...
+            </div>
+          </div>
+          
+          <script dangerouslySetInnerHTML={{
+            __html: `
+              document.addEventListener('DOMContentLoaded', function() {
+                console.log('DOM fully loaded');
+                
+                // Set timezone
+                try {
+                  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                  document.getElementById('timezone').textContent = timezone;
+                } catch (e) {
+                  console.error('Error getting timezone:', e);
+                  document.getElementById('timezone').textContent = 'Error al detectar zona horaria';
+                }
+                
+                // Update time every second
+                function updateClock() {
+                  try {
+                    const now = new Date();
+                    // Format date
+                    const dateOptions = { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    };
+                    const dateStr = new Intl.DateTimeFormat('es-ES', dateOptions).format(now);
+                    document.getElementById('current-date').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+                    
+                    // Format time
+                    const timeOptions = { 
+                      hour: '2-digit', 
+                      minute: '2-digit', 
+                      second: '2-digit',
+                      hour12: true
+                    };
+                    document.getElementById('current-time').textContent = new Intl.DateTimeFormat('es-ES', timeOptions).format(now);
+                    
+                    console.log('Clock updated at:', now);
+                  } catch (e) {
+                    console.error('Error updating clock:', e);
+                    document.getElementById('current-date').textContent = 'Error al cargar la fecha';
+                    document.getElementById('current-time').textContent = '--:--:--';
+                  }
+                }
+                
+                // Update immediately
+                updateClock();
+                
+                // Update every second
+                setInterval(updateClock, 1000);
+              });
+            `
+          }} />
           
           <a 
             href="https://docs.elpulsar.app" 
