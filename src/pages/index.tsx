@@ -8,6 +8,15 @@ import { es } from 'date-fns/locale';
 export default function Home() {
   const [currentDate, setCurrentDate] = useState('');
   const [currentTime, setCurrentTime] = useState('');
+  const [timezone, setTimezone] = useState('');
+
+  // Get user's timezone on client side
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      setTimezone(userTimezone);
+    }
+  }, []);
 
   useEffect(() => {
     // Update date and time immediately
@@ -20,10 +29,19 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('es-AR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+  };
+
   const updateDateTime = () => {
     const now = new Date();
     setCurrentDate(format(now, "EEEE d 'de' MMMM 'de' yyyy", { locale: es }));
-    setCurrentTime(now.toLocaleTimeString('es-AR'));
+    setCurrentTime(formatTime(now));
   };
 
   return (
@@ -58,13 +76,21 @@ export default function Home() {
               </h2>
             </div>
             
-            <div className="space-y-4">
-              <div className="text-3xl font-medium text-gray-800">
-                {currentDate}
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <div className="text-3xl font-medium text-gray-800">
+                  {currentDate}
+                </div>
+                <div className="text-5xl font-bold text-blue-600">
+                  {currentTime}
+                </div>
               </div>
-              <div className="text-5xl font-bold text-blue-600">
-                {currentTime}
-              </div>
+              {timezone && (
+                <div className="text-sm text-gray-500">
+                  <p>Hora local de tu ubicación</p>
+                  <p className="text-xs">Zona horaria: {timezone}</p>
+                </div>
+              )}
             </div>
           </div>
           
