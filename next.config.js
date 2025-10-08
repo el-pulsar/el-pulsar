@@ -31,11 +31,13 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  output: 'export',
-  distDir: 'out',
+  // Eliminamos 'output: export' para permitir SSR/ISR en Vercel
+  // output: 'export',
+  // distDir: 'out',  // Vercel maneja el directorio de salida
   images: {
-    unoptimized: true,
     domains: ['www.elpulsar.app', 'docs.elpulsar.app'],
+    // Habilitar optimización de imágenes de Vercel
+    unoptimized: false,
   },
   compress: true,
   async headers() {
@@ -46,12 +48,27 @@ const nextConfig = {
       },
     ]
   },
-  exportPathMap: async function() {
-    return {
-      '/': { page: '/' },
-      '/index.html': { page: '/' },
-    }
-  }
+  // Eliminamos exportPathMap ya que no es necesario con el enrutamiento de páginas de Next.js
+  // exportPathMap: async function() {
+  //   return {
+  //     '/': { page: '/' },
+  //     '/index.html': { page: '/' },
+  //   }
+  // },
+  // Configuración para Vercel
+  experimental: {
+    // Mejora el rendimiento de la compilación
+    optimizeCss: true,
+    // Mejora el rendimiento del servidor
+    serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs'],
+  },
+  // Configuración de caché
+  onDemandEntries: {
+    // Tiempo en segundos que la página permanece en la caché
+    maxInactiveAge: 25 * 1000,
+    // Número de páginas que se mantienen en la caché
+    pagesBufferLength: 2,
+  },
 }
 
 module.exports = nextConfig
