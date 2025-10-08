@@ -2,24 +2,31 @@
   "version": 2,
   "builds": [
     {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
       "src": "docs/**/*",
       "use": "@vercel/static"
     }
   ],
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "https://www.elpulsar.app",
-      "permanent": true
-    }
-  ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/docs/(.*)",
       "dest": "/docs/$1"
     },
     {
       "src": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "docs.elpulsar.app"
+        }
+      ],
       "dest": "/docs/index.html"
     }
   ]
