@@ -349,50 +349,52 @@ export default function Home() {
 
   // Get user's timezone on client side
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    // Solo se ejecuta en el cliente
+    if (typeof window === 'undefined') return;
+    
+    const updateClock = () => {
+      const now = new Date();
       const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      updateDateTime(userTimezone);
       
-      // Update time every second
-      const timer = setInterval(() => updateDateTime(userTimezone), 1000);
+      // Formatear fecha
+      const dateOptions: Intl.DateTimeFormatOptions = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        timeZone: userTimezone
+      };
       
-      // Cleanup interval on component unmount
-      return () => clearInterval(timer);
-    }
+      const dateStr = now.toLocaleDateString('es-ES', dateOptions);
+      const formattedDate = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+      
+      // Formatear hora
+      const timeOptions: Intl.DateTimeFormatOptions = {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+        timeZone: userTimezone
+      };
+      
+      const timeStr = now.toLocaleTimeString('es-ES', timeOptions);
+      
+      setCurrentDateTime({
+        date: formattedDate,
+        time: timeStr,
+        timezone: userTimezone
+      });
+    };
+    
+    // Actualizar inmediatamente
+    updateClock();
+    
+    // Actualizar cada segundo
+    const timer = setInterval(updateClock, 1000);
+    
+    // Limpiar intervalo al desmontar el componente
+    return () => clearInterval(timer);
   }, []);
-
-  const updateDateTime = (timezone: string) => {
-    const now = new Date();
-    
-    // Formatear fecha
-    const dateOptions: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      timeZone: timezone
-    };
-    
-    const dateStr = now.toLocaleDateString('es-ES', dateOptions);
-    const formattedDate = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
-    
-    // Formatear hora
-    const timeOptions: Intl.DateTimeFormatOptions = {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true,
-      timeZone: timezone
-    };
-    
-    const timeStr = now.toLocaleTimeString('es-ES', timeOptions);
-    
-    setCurrentDateTime({
-      date: formattedDate,
-      time: timeStr,
-      timezone: timezone
-    });
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -420,14 +422,46 @@ export default function Home() {
           
           <div className="clock-container">
             <span className="clock-label">Fecha Actual</span>
-            <div id="reloj">{currentDateTime.date}</div>
+            <div id="reloj" style={{
+              fontSize: '1.5rem',
+              fontWeight: 600,
+              color: 'var(--gray-900)',
+              background: 'rgba(255, 255, 255, 0.7)',
+              padding: '1rem',
+              borderRadius: '0.5rem',
+              margin: '0.5rem 0',
+              minWidth: '300px',
+              display: 'inline-block',
+              boxShadow: 'var(--shadow-sm)',
+              border: '1px solid rgba(0, 0, 0, 0.05)'
+            }}>
+              {currentDateTime.date || 'Cargando fecha...'}
+            </div>
             
-            <span className="clock-label" style={{ marginTop: '1rem' }}>Hora Actual</span>
-            <div id="reloj">{currentDateTime.time}</div>
+            <span className="clock-label" style={{ marginTop: '1rem', display: 'block' }}>Hora Actual</span>
+            <div id="hora" style={{
+              fontSize: '2.5rem',
+              fontWeight: 700,
+              color: 'var(--primary)',
+              margin: '0.5rem 0',
+              fontFamily: 'JetBrains Mono, monospace',
+              letterSpacing: '1px'
+            }}>
+              {currentDateTime.time || '--:--:--'}
+            </div>
             
-            <span className="clock-label" style={{ marginTop: '1rem' }}>Zona Horaria</span>
-            <div style={{ marginTop: '0.5rem', color: 'var(--gray-700)' }}>
-              {currentDateTime.timezone}
+            <span className="clock-label" style={{ marginTop: '1rem', display: 'block' }}>Zona Horaria</span>
+            <div style={{
+              marginTop: '0.5rem',
+              color: 'var(--gray-600)',
+              fontSize: '0.9rem',
+              fontFamily: 'monospace',
+              backgroundColor: 'rgba(0, 0, 0, 0.02)',
+              padding: '0.5rem 1rem',
+              borderRadius: '0.25rem',
+              display: 'inline-block'
+            }}>
+              {currentDateTime.timezone || 'Cargando zona horaria...'}
             </div>
           </div>
           
@@ -436,6 +470,25 @@ export default function Home() {
             className="btn"
             target="_blank"
             rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'linear-gradient(135deg, var(--primary), var(--accent))',
+              color: 'white',
+              padding: '1rem 2.5rem',
+              borderRadius: '9999px',
+              textDecoration: 'none',
+              fontWeight: 600,
+              fontSize: '1.125rem',
+              marginTop: '2rem',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: '0 4px 20px -5px rgba(99, 102, 241, 0.5)',
+              position: 'relative',
+              overflow: 'hidden',
+              zIndex: 1,
+              minWidth: '220px'
+            }}
           >
             Ir a la Documentación
           </a>
