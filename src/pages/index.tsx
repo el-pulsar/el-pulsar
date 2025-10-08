@@ -342,27 +342,37 @@ const styles = `
 
 // Función para formatear la fecha
 const formatDate = (date: Date, timezone: string) => {
-  const options: Intl.DateTimeFormatOptions = {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    timeZone: timezone
-  };
-  const dateStr = date.toLocaleDateString('es-ES', options);
-  return dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+  try {
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: timezone
+    };
+    const dateStr = new Intl.DateTimeFormat('es-ES', options).format(date);
+    return dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+  } catch (error) {
+    console.error('Error al formatear la fecha:', error);
+    return 'Error al cargar la fecha';
+  }
 };
 
 // Función para formatear la hora
 const formatTime = (date: Date, timezone: string) => {
-  const options: Intl.DateTimeFormatOptions = {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true,
-    timeZone: timezone
-  };
-  return date.toLocaleTimeString('es-ES', options);
+  try {
+    const options: Intl.DateTimeFormatOptions = {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+      timeZone: timezone
+    };
+    return new Intl.DateTimeFormat('es-ES', options).format(date);
+  } catch (error) {
+    console.error('Error al formatear la hora:', error);
+    return '--:--:--';
+  }
 };
 
 export default function Home() {
@@ -383,39 +393,31 @@ export default function Home() {
         const now = new Date();
         const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         
-        // Formatear la fecha y hora directamente
-        const dateOptions: Intl.DateTimeFormatOptions = {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          timeZone: userTimezone
-        };
+        // Usar las funciones de formateo mejoradas
+        const formattedDate = formatDate(now, userTimezone);
+        const formattedTime = formatTime(now, userTimezone);
         
-        const timeOptions: Intl.DateTimeFormatOptions = {
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: true,
-          timeZone: userTimezone
-        };
-        
-        const formattedDate = now.toLocaleDateString('es-ES', dateOptions);
-        const formattedTime = now.toLocaleTimeString('es-ES', timeOptions);
-        
-        // Actualizar el estado
-        setCurrentDateTime({
-          date: formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1),
-          time: formattedTime,
-          timezone: userTimezone
+        // Actualizar el estado solo si los valores han cambiado
+        setCurrentDateTime(prev => {
+          if (prev.date === formattedDate && 
+              prev.time === formattedTime && 
+              prev.timezone === userTimezone) {
+            return prev;
+          }
+          return {
+            date: formattedDate,
+            time: formattedTime,
+            timezone: userTimezone
+          };
         });
       } catch (error) {
         console.error('Error al actualizar el reloj:', error);
-        setCurrentDateTime({
+        setCurrentDateTime(prev => ({
+          ...prev,
           date: 'Error al cargar la fecha',
           time: '--:--:--',
           timezone: 'Error al detectar zona horaria'
-        });
+        }));
       }
     };
     
