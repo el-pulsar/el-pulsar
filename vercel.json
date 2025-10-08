@@ -1,12 +1,39 @@
 {
   "version": 2,
   "builds": [
-    { "src": "index.html", "use": "@vercel/static" },
-    { "src": "docs/**", "use": "@vercel/static" }
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "docs/**",
+      "use": "@vercel/static"
+    }
   ],
   "routes": [
-    { "src": "/", "dest": "/index.html" },
-    { "src": "/docs/(?<path>.*)", "dest": "/docs/$path" },
-    { "src": "/(?<path>.*)", "dest": "/docs/$path" }
+    {
+      "src": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "elpulsar.app"
+        }
+      ],
+      "dest": "/index.html"
+    },
+    {
+      "src": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "docs.elpulsar.app"
+        }
+      ],
+      "dest": "/docs/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/docs/$1"
+    }
   ]
 }
