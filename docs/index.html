@@ -1,10 +1,168 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Documentación de El Pulsar</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-700: #374151;
+            --gray-900: #111827;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f9fafb;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        h1 {
+            color: var(--gray-900);
+            font-size: 2.25rem;
+            margin-bottom: 1rem;
+        }
+        
+        .subtitle {
+            color: var(--gray-700);
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section h2 {
+            color: var(--primary);
+            margin-top: 0;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .resource-card {
+            padding: 1.25rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .resource-card h3 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+        
+        .resource-card p {
+            margin: 0.5rem 0;
+            color: var(--gray-700);
+        }
+        
+        .resource-link {
+            display: inline-block;
+            margin-top: 0.75rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .resource-link:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+        
+        .resource-link::after {
+            content: '→';
+            margin-left: 0.5rem;
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+        
+        .resource-link:hover::after {
+            transform: translateX(4px);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            color: var(--gray-700);
+            font-size: 0.875rem;
+        }
+    </style>
 </head>
 <body>
-    <h1>Bienvenido a la documentación de El Pulsar</h1>
-    <p>Documentación en construcción.</p>
+    <header>
+        <h1>Documentación de El Pulsar</h1>
+        <p class="subtitle">Recursos y guías para la plataforma de gestión empresarial</p>
+    </header>
+    
+    <main>
+        <section class="section">
+            <h2>Hyperledger Fabric</h2>
+            
+            <div class="resource-card">
+                <h3>Hyperledger Fabric: Desgranado</h3>
+                <p>Un análisis detallado de los componentes y arquitectura de Hyperledger Fabric.</p>
+                <a href="https://notebooklm.google.com/notebook/bf47c6e2-8ea0-4098-ac71-de525fb2c33f?artifactId=903ed465-efe0-4cb5-aeda-53d295cc9a15" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   class="resource-link">
+                    Ver documento
+                </a>
+            </div>
+            
+            <div class="resource-card">
+                <h3>Hyperledger Fabric: Solución Empresarial</h3>
+                <p>Guía completa sobre la implementación de Hyperledger Fabric en entornos empresariales.</p>
+                <a href="https://notebooklm.google.com/notebook/bf47c6e2-8ea0-4098-ac71-de525fb2c33f?artifactId=b40ed36c-2ff8-4975-a605-c0736b55d267" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   class="resource-link">
+                    Ver documento
+                </a>
+            </div>
+            
+            <div class="resource-card">
+                <h3>Hyperledger Fabric: Las 5 Claves de Expertos</h3>
+                <p>Datos, identidad y seguridad: las claves para gobernar y escalar blockchain empresarial.</p>
+                <a href="https://notebooklm.google.com/notebook/bf47c6e2-8ea0-4098-ac71-de525fb2c33f?artifactId=fe47bcf2-df49-45cc-ace0-1524b003d3fd" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   class="resource-link">
+                    Ver documento
+                </a>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>© 2025 El Pulsar. Todos los derechos reservados.</p>
+    </footer>
 </body>
 </html>
