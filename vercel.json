@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "$schema": "https://json.schemastore.org/vercel.json",
   "builds": [
     {
       "src": "package.json",
