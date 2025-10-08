@@ -12,7 +12,7 @@
   ],
   "routes": [
     {
-      "src": "/",
+      "src": "/(.*)",
       "has": [
         {
           "type": "host",
@@ -22,17 +22,17 @@
       "dest": "/index.html"
     },
     {
-      "src": "/",
+      "src": "/(.*)",
       "has": [
         {
           "type": "host",
           "value": "docs.elpulsar.app"
         }
       ],
-      "dest": "/docs/index.html"
+      "dest": "/docs/$1"
     },
     {
-      "src": "/(.*)",
+      "src": "/docs/(.*)",
       "dest": "/docs/$1"
     }
   ]
